@@ -11,6 +11,7 @@ print("Missing files for", speakerID, ":")
 count = 0
 extracount = 0
 sentIDs = []
+fileIDs = []
 
 sentences = open("/Users/Laura/Desktop/fall-2016/NIH/Stimuli/evanston/evanston1.csv", "r")
 print("MISSING")
@@ -26,18 +27,18 @@ for i in sentIDs:
 		print(i)
 print(count, "missing sentences")
 
-print("EXTRA")
-# Find any extra sentences
+# Make all the sentence IDs into filenames and put in a list
+for sent in sentIDs:
+	fileID = "{0}_{1}.wav".format(speakerID, sent)
+	fileIDs.append(fileID)
+
+# Walk through directory and find any filenames that aren't in the list of expected filenames
+print("Extra files for", speakerID, ":")
 for root, dirs, files in os.walk("/Users/Laura/Desktop/fall-2016/NIH/recordings-2016/{0}/{0}_seg".format(speakerID), topdown=False):
 	for filename in files:
-		if filename != ".DS_Store":
-			filename = filename.split("_")
-			group = filename[1]
-			sent = filename[2]
-			sent = sent.split(".")
-			sent = sent[0]
-			sentID = group + "_" + sent
-			if not sentID in sentIDs:
-				extracount += 1
-				print(sentID)
+		if filename != ".DS_Store": # This file is always created and should be ignored
+			filename = os.path.basename(filename)
+			if filename not in fileIDs:
+					extracount += 1
+					print(filename)
 print(extracount, "extra sentences")
